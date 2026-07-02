@@ -1,0 +1,7 @@
+{
+  "appId": "pt.rjp.iprjp",
+  "appName": "IP_RJP",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": { "androidScheme": "https" }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "IP_RJP",
+  "short_name": "IP_RJP",
+  "description": "Deslocações • Prevenções BT/CC",
+  "start_url": "/IP_RJP/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#009C8C",
+  "icons": [
+    { "src": "/IP_RJP/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/IP_RJP/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
