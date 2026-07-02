@@ -1,40 +1,44 @@
-# IP_RJP Professional 3.0
+# IP_RJP Outlook Edition 4.0
 
-Aplicação para gestão profissional de deslocações, prevenções BT/CC, atividades e viaturas.
+Aplicação focada apenas na integração com Microsoft Outlook / Microsoft 365:
 
-## Inclui
+- Agenda Outlook
+- Tarefas Microsoft To Do
+- Contactos Outlook
+- Atividades IP_RJP exportáveis para Outlook
 
-- Dashboard mensal
-- Calendário mensal
-- Deslocações com matrícula, origem, destino, saída e chegada
-- Prevenções apenas BT ou CC
-- Atividades profissionais
-- Viaturas pré-carregadas:
-  - 03-ZQ-46 — Fiat — branco
-  - 23-ZP-64 — Renault Kangoo — branco
-  - 87-HN-72 — Mitsubishi L200 DI-D — branco
-- Exportação PDF / impressão
-- Exportação CSV
-- Exportação Excel compatível
-- Base local via localStorage
-- Preparado para Outlook / Microsoft Graph
-- WebApp e APK via GitHub Actions
+## Dados da aplicação
 
-## Cabeçalho
+IP_RJP
 
-IP_RJP  
-Deslocações • Prevenções BT/CC
+Autor  
+Rui Jorge Pedro
 
-## Sobre
+Infraestruturas de Portugal
 
-IP_RJP  
-Autor: Rui Jorge Pedro  
-Infraestruturas de Portugal  
 © 2026
 
-## Publicar
+## Configuração
 
-1. Extrair o ZIP.
-2. Enviar os ficheiros soltos para o GitHub.
-3. Confirmar que existem `src`, `public`, `package.json`, `vite.config.js`, `capacitor.config.json` e `.github/workflows`.
-4. Correr Actions → Build Android APK.
+1. Criar registo da aplicação no Microsoft Entra.
+2. Copiar Application/Client ID.
+3. Copiar Directory/Tenant ID.
+4. Na app, abrir Definições e preencher os campos.
+5. Clicar em Ligar.
+
+## Permissões Microsoft Graph
+
+- User.Read
+- Calendars.ReadWrite
+- Tasks.ReadWrite
+- Contacts.Read
+- offline_access
+- openid
+- profile
+
+## GitHub
+
+Fazer upload dos ficheiros soltos para o repositório. Depois executar:
+
+- Build WebApp
+- Build Android APK
