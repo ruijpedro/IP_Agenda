@@ -42,3 +42,18 @@ Fazer upload dos ficheiros soltos para o repositório. Depois executar:
 
 - Build WebApp
 - Build Android APK
+
+## Correção de ícone Android 4.1
+
+Esta versão inclui os ícones completos em `public/icons/android/`:
+
+- `mipmap-mdpi`
+- `mipmap-hdpi`
+- `mipmap-xhdpi`
+- `mipmap-xxhdpi`
+- `mipmap-xxxhdpi`
+- `mipmap-anydpi-v26`
+
+O workflow `build-android.yml` recria a plataforma Android e copia todos os ícones antes de compilar a APK, evitando o ícone genérico.
+
+Depois de instalar a nova APK no telemóvel, desinstala primeiro a APK antiga para limpar a cache do launcher Android.
