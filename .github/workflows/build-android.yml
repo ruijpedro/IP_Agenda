@@ -17,10 +17,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install Dependencies
         run: |
@@ -43,10 +43,11 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Ensure Android Manifest
+      - name: Ensure Android label and icon
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
           sed -i 's/android:label="[^\"]*"/android:label="IP_RJP"/g' "$MANIFEST"
+          sed -i 's/android:theme="@style\/AppTheme.NoActionBarLaunch"/android:theme="@style\/AppTheme.NoActionBarLaunch" android:icon="@mipmap\/ic_launcher" android:roundIcon="@mipmap\/ic_launcher_round"/g' "$MANIFEST" || true
 
       - name: Build Debug APK
         run: |
@@ -57,5 +58,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: IP_RJP_Debug_APK
+          name: IP_RJP_Outlook_Debug_APK
           path: android/app/build/outputs/apk/debug/app-debug.apk

@@ -17,13 +17,17 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: |
+          node-version: 22
+      - name: Install Dependencies
+        run: |
           npm install -g npm@10.9.2
           rm -rf node_modules package-lock.json
           npm install --legacy-peer-deps --no-audit --no-fund --no-package-lock
-          npm run build
-      - uses: actions/upload-pages-artifact@v3
+      - name: Build
+        run: npm run build
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist
-      - uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
