@@ -43,20 +43,82 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Ensure Android label and icon
+      - name: Apply IP_RJP icons
+        run: |
+          set -e
+          mkdir -p android/app/src/main/res/mipmap-mdpi
+          mkdir -p android/app/src/main/res/mipmap-hdpi
+          mkdir -p android/app/src/main/res/mipmap-xhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+          mkdir -p android/app/src/main/res/mipmap-anydpi-v26
+
+          # Copiar ícones se estiverem em public/icons/android/<density>/
+          for D in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            if [ -f "public/icons/android/mipmap-$D/ic_launcher.png" ]; then
+              cp "public/icons/android/mipmap-$D/ic_launcher.png" "android/app/src/main/res/mipmap-$D/ic_launcher.png"
+            fi
+            if [ -f "public/icons/android/mipmap-$D/ic_launcher_round.png" ]; then
+              cp "public/icons/android/mipmap-$D/ic_launcher_round.png" "android/app/src/main/res/mipmap-$D/ic_launcher_round.png"
+            fi
+            if [ -f "public/icons/android/mipmap-$D/ic_launcher_adaptive_fore.png" ]; then
+              cp "public/icons/android/mipmap-$D/ic_launcher_adaptive_fore.png" "android/app/src/main/res/mipmap-$D/ic_launcher_adaptive_fore.png"
+            fi
+            if [ -f "public/icons/android/mipmap-$D/ic_launcher_adaptive_back.png" ]; then
+              cp "public/icons/android/mipmap-$D/ic_launcher_adaptive_back.png" "android/app/src/main/res/mipmap-$D/ic_launcher_adaptive_back.png"
+            fi
+          done
+
+          # Fallback: se só existir um ícone 512/1024, copiar para todas as densidades
+          FALLBACK=""
+          if [ -f "public/icons/play_store_512.png" ]; then FALLBACK="public/icons/play_store_512.png"; fi
+          if [ -f "public/play_store_512.png" ]; then FALLBACK="public/play_store_512.png"; fi
+          if [ -f "public/logo.png" ]; then FALLBACK="public/logo.png"; fi
+
+          if [ -n "$FALLBACK" ]; then
+            for D in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+              if [ ! -f "android/app/src/main/res/mipmap-$D/ic_launcher.png" ]; then
+                cp "$FALLBACK" "android/app/src/main/res/mipmap-$D/ic_launcher.png"
+                cp "$FALLBACK" "android/app/src/main/res/mipmap-$D/ic_launcher_round.png"
+              fi
+            done
+          fi
+
+          cat > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+            <background android:drawable="@mipmap/ic_launcher_adaptive_back"/>
+            <foreground android:drawable="@mipmap/ic_launcher_adaptive_fore"/>
+          </adaptive-icon>
+          EOF
+
+          cat > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+            <background android:drawable="@mipmap/ic_launcher_adaptive_back"/>
+            <foreground android:drawable="@mipmap/ic_launcher_adaptive_fore"/>
+          </adaptive-icon>
+          EOF
+
+      - name: Ensure Android Manifest icon
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
-          sed -i 's/android:label="[^\"]*"/android:label="IP_RJP"/g' "$MANIFEST"
-          sed -i 's/android:theme="@style\/AppTheme.NoActionBarLaunch"/android:theme="@style\/AppTheme.NoActionBarLaunch" android:icon="@mipmap\/ic_launcher" android:roundIcon="@mipmap\/ic_launcher_round"/g' "$MANIFEST" || true
+          sed -i 's/android:label="[^"]*"/android:label="IP_RJP"/g' "$MANIFEST"
+          sed -i 's/android:icon="[^"]*"/android:icon="@mipmap\/ic_launcher"/g' "$MANIFEST" || true
+          sed -i 's/android:roundIcon="[^"]*"/android:roundIcon="@mipmap\/ic_launcher_round"/g' "$MANIFEST" || true
+          if ! grep -q 'android:icon=' "$MANIFEST"; then
+            sed -i 's/<application/<application android:icon="@mipmap\/ic_launcher" android:roundIcon="@mipmap\/ic_launcher_round"/' "$MANIFEST"
+          fi
+          cat "$MANIFEST"
 
       - name: Build Debug APK
         run: |
-          chmod +x android/gradlew
           cd android
+          chmod +x ./gradlew
           ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: IP_RJP_Outlook_Debug_APK
+          name: IP_RJP_Debug_APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
