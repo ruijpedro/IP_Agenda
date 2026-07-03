@@ -1,59 +1,43 @@
-# IP_RJP Outlook Edition 4.0
+# IP_RJP — Agenda IP Hybrid Edition 4.2
 
-Aplicação focada apenas na integração com Microsoft Outlook / Microsoft 365:
+Aplicação para registo profissional de deslocações, prevenções BT/CC, viaturas, horas de saída/chegada, relatórios mensais e agenda.
 
-- Agenda Outlook
-- Tarefas Microsoft To Do
-- Contactos Outlook
-- Atividades IP_RJP exportáveis para Outlook
+## O que mudou nesta versão
 
-## Dados da aplicação
+- WebApp continua a ligar ao Google com Google Identity Services.
+- APK Android deixa de depender do Google Identity Services dentro da WebView.
+- APK liga através do Google Apps Script URL.
+- Exportação para agenda na APK cria eventos via CalendarApp no Apps Script.
+- Consulta da agenda na APK lê eventos via Apps Script.
+- Mantém registo local, PDF/relatório e dados de deslocações/prevenções.
 
-IP_RJP
+## Configuração na WebApp
 
-Autor  
-Rui Jorge Pedro
+Preencher em Definições:
 
-Infraestruturas de Portugal
+- Google Client ID
+- Google API Key, se necessário
+- Apps Script URL, opcional mas recomendado
 
-© 2026
+## Configuração na APK
 
-## Configuração
+Preencher em Definições:
 
-1. Criar registo da aplicação no Microsoft Entra.
-2. Copiar Application/Client ID.
-3. Copiar Directory/Tenant ID.
-4. Na app, abrir Definições e preencher os campos.
-5. Clicar em Ligar.
+- Apps Script URL obrigatório
+- Google Client ID não é necessário para o modo APK
+- Google API Key não é necessário para o modo APK
 
-## Permissões Microsoft Graph
+O botão Ligar na APK testa a ligação ao Apps Script.
 
-- User.Read
-- Calendars.ReadWrite
-- Tasks.ReadWrite
-- Contacts.Read
-- offline_access
-- openid
-- profile
+## Apps Script
 
-## GitHub
+Copiar o ficheiro:
 
-Fazer upload dos ficheiros soltos para o repositório. Depois executar:
+`google-apps-script/Code.gs`
 
-- Build WebApp
-- Build Android APK
+para um projeto Google Apps Script e publicar como Aplicação Web:
 
-## Correção de ícone Android 4.1
+- Executar como: Eu
+- Quem tem acesso: Qualquer pessoa
 
-Esta versão inclui os ícones completos em `public/icons/android/`:
-
-- `mipmap-mdpi`
-- `mipmap-hdpi`
-- `mipmap-xhdpi`
-- `mipmap-xxhdpi`
-- `mipmap-xxxhdpi`
-- `mipmap-anydpi-v26`
-
-O workflow `build-android.yml` recria a plataforma Android e copia todos os ícones antes de compilar a APK, evitando o ícone genérico.
-
-Depois de instalar a nova APK no telemóvel, desinstala primeiro a APK antiga para limpar a cache do launcher Android.
+Depois copiar o URL terminado em `/exec` para o campo Apps Script URL.

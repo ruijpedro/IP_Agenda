@@ -1,6 +1,6 @@
 {
-  "name": "ip-rjp-outlook",
-  "version": "4.0.0",
+  "name": "ip-rjp-agenda-deslocacoes-prevencoes",
+  "version": "6.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,6 @@
     "cap:sync": "cap sync android"
   },
   "dependencies": {
-    "@azure/msal-browser": "^3.28.1",
     "@capacitor/android": "^7.0.1",
     "@capacitor/app": "^7.0.0",
     "@capacitor/core": "^7.0.1",

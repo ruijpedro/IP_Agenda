@@ -1,14 +1,15 @@
 export const DEFAULT_SETTINGS = {
-  clientId: '',
-  tenantId: 'common',
+  googleClientId: '',
+  googleApiKey: '',
+  appsScriptUrl: '',
   redirectUri: window.location.origin,
   userName: 'Rui Jorge Pedro',
   organization: 'Infraestruturas de Portugal'
 }
 
 const KEYS = {
-  settings: 'ip_rjp_outlook_settings_v4',
-  activities: 'ip_rjp_outlook_activities_v4'
+  settings: 'ip_rjp_google_settings_v1',
+  activities: 'ip_rjp_google_activities_v1'
 }
 
 export function loadSettings() {
