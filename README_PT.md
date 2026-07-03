@@ -41,3 +41,12 @@ para um projeto Google Apps Script e publicar como Aplicação Web:
 - Quem tem acesso: Qualquer pessoa
 
 Depois copiar o URL terminado em `/exec` para o campo Apps Script URL.
+
+
+## V5.1 - Apps Script Sync
+
+- WebApp e APK usam o mesmo Apps Script URL.
+- Agenda deixa de chamar diretamente a Google Calendar API quando existe Apps Script URL.
+- Guardar registo envia para Google Sheets e cria evento no Google Calendar via Apps Script.
+- Corrigido erro 401 Invalid Credentials no separador Agenda.
+- Corrigido espaçamento superior na APK.

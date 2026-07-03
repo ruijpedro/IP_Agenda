@@ -1,9 +1,8 @@
 export const DEFAULT_SETTINGS = {
   googleClientId: '',
   googleApiKey: '',
-  appsScriptUrl: '',
-  redirectUri: window.location.origin,
-  userName: 'Rui Jorge Pedro',
+  appsScriptUrl: 'https://script.google.com/macros/s/AKfycbwqdw6jTSSOwLargxrTEn8aqm1g5hpqVVmyjMCy_83ot7__s9SyS1oUCRWEZ9lBPf2p/exec',
+    userName: 'Rui Jorge Pedro',
   organization: 'Infraestruturas de Portugal'
 }
 

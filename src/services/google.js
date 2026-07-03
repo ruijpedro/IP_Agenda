@@ -15,6 +15,16 @@ function isNativeApp() {
   return !!(window.Capacitor?.isNativePlatform?.() || window.location.protocol === 'capacitor:')
 }
 
+function hasAppsScript(settings) {
+  return !!settings?.appsScriptUrl?.trim()
+}
+
+function preferAppsScript(settings) {
+  // V5.1: se houver Apps Script URL, WebApp e APK usam sempre o backend.
+  // Isto elimina chamadas diretas à Google API e evita 401 por tokens antigos.
+  return hasAppsScript(settings)
+}
+
 function loadScript(src) {
   return new Promise((resolve, reject) => {
     if (document.querySelector(`script[src="${src}"]`)) return resolve()
@@ -43,15 +53,15 @@ async function ensureGoogleIdentity(settings) {
 
 function requireAppsScript(settings) {
   if (!settings.appsScriptUrl?.trim()) {
-    throw new Error('Na APK usa o Apps Script URL. Preenche esse campo em Definições.')
+    throw new Error('Preenche o Apps Script URL em Definições.')
   }
 }
 
 export async function signIn(settings) {
-  if (isNativeApp()) {
+  if (preferAppsScript(settings) || isNativeApp()) {
     requireAppsScript(settings)
     await callAppsScript(settings, { action: 'test', payload: {} })
-    account = { name: 'IP_RJP APK', email: 'Ligado via Apps Script', native: true }
+    account = { name: 'IP_RJP', email: 'Ligado via Apps Script', native: isNativeApp(), appsScript: true }
     localStorage.setItem('ip_rjp_google_account_v1', JSON.stringify(account))
     return account
   }
@@ -87,7 +97,9 @@ export async function getAccount() {
 }
 
 export async function getToken(settings) {
-  if (isNativeApp()) throw new Error('Na APK a sincronização usa Apps Script, sem Google Identity Services.')
+  if (preferAppsScript(settings) || isNativeApp()) {
+    throw new Error('Esta versão usa Apps Script para sincronização, sem Google Identity Services.')
+  }
   if (accessToken) return accessToken
   const client = await ensureGoogleIdentity(settings)
   return new Promise((resolve, reject) => {
@@ -123,7 +135,7 @@ async function googleApi(path, options = {}) {
 }
 
 export async function fetchEvents(settings, start, end) {
-  if (isNativeApp()) {
+  if (preferAppsScript(settings) || isNativeApp()) {
     return callAppsScript(settings, { action: 'getCalendarEvents', payload: { start, end } })
   }
 
@@ -138,7 +150,7 @@ export async function fetchEvents(settings, start, end) {
 }
 
 export async function createEvent(settings, activity) {
-  if (isNativeApp()) {
+  if (preferAppsScript(settings) || isNativeApp()) {
     return callAppsScript(settings, { action: 'createCalendarEvent', payload: activity })
   }
 
@@ -153,7 +165,7 @@ export async function createEvent(settings, activity) {
 }
 
 export async function fetchTodoTasks(settings) {
-  if (isNativeApp()) return callAppsScript(settings, { action: 'getTasks', payload: {} })
+  if (preferAppsScript(settings) || isNativeApp()) return callAppsScript(settings, { action: 'getTasks', payload: {} })
 
   const lists = await googleApi('/tasks/v1/users/@me/lists?maxResults=20', { settings })
   const list = lists.items?.[0]
@@ -162,7 +174,7 @@ export async function fetchTodoTasks(settings) {
 }
 
 export async function createTodoTask(settings, title, dueDate) {
-  if (isNativeApp()) return callAppsScript(settings, { action: 'createTask', payload: { title, dueDate } })
+  if (preferAppsScript(settings) || isNativeApp()) return callAppsScript(settings, { action: 'createTask', payload: { title, dueDate } })
 
   const lists = await googleApi('/tasks/v1/users/@me/lists?maxResults=20', { settings })
   const list = lists.items?.[0]
@@ -172,7 +184,7 @@ export async function createTodoTask(settings, title, dueDate) {
 }
 
 export async function fetchContacts(settings) {
-  if (isNativeApp()) return callAppsScript(settings, { action: 'getContacts', payload: {} })
+  if (preferAppsScript(settings) || isNativeApp()) return callAppsScript(settings, { action: 'getContacts', payload: {} })
 
   return googleApi('/people/v1/people/me/connections?personFields=names,emailAddresses,phoneNumbers&pageSize=100&sortOrder=FIRST_NAME_ASCENDING', { settings })
 }
@@ -186,5 +198,7 @@ export async function callAppsScript(settings, payload) {
   })
 
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}: ${await res.text()}`)
-  return res.json()
+  const data = await res.json()
+  if (data && data.ok === false) throw new Error(data.error || 'Erro no Apps Script.')
+  return data
 }

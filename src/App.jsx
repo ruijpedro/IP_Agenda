@@ -114,7 +114,7 @@ function Header({ account, status, onLogin, onLogout }) {
   const statusText = status?.ok
     ? '🟢 Ligado ao Apps Script'
     : connected
-      ? `Google ligado: ${account.email || account.name}`
+      ? `Ligado: ${account.email || account.name}`
       : hasAppsScript(status?.settings || {})
         ? 'Apps Script configurado · clica em Ligar'
         : 'Modo local ativo'
@@ -308,7 +308,6 @@ function Report({ items, settings }) {
 function Definicoes({ settings, setSettings, onTest }) {
   const [local, setLocal] = useState(settings)
   const [msg, setMsg] = useState('')
-  const native = isNativeApp()
   function save() { saveSettings(local); setSettings(local); setMsg('Definições guardadas.') }
   async function test() {
     try { await onTest(local); setMsg('Ligação Apps Script ativa.') }
@@ -318,10 +317,6 @@ function Definicoes({ settings, setSettings, onTest }) {
     <section className="card">
       <h2>Definições</h2>
       <div className="gridForm">
-        {!native && <>
-          <label>Google Client ID<input value={local.googleClientId} onChange={e => setLocal({ ...local, googleClientId: e.target.value })} placeholder="Só para WebApp" /></label>
-          <label>Google API Key<input value={local.googleApiKey} onChange={e => setLocal({ ...local, googleApiKey: e.target.value })} placeholder="Opcional" /></label>
-        </>}
         <label className="wide">Apps Script URL<input value={local.appsScriptUrl} onChange={e => setLocal({ ...local, appsScriptUrl: e.target.value })} placeholder="https://script.google.com/macros/s/.../exec" /></label>
         <label>Autor<input value={local.userName} onChange={e => setLocal({ ...local, userName: e.target.value })} /></label>
         <label>Organização<input value={local.organization} onChange={e => setLocal({ ...local, organization: e.target.value })} /></label>
@@ -345,6 +340,7 @@ export default function App() {
     const test = await callAppsScript(customSettings, { action: 'test', payload: {} })
     if (!test.ok) throw new Error(test.error || 'Apps Script respondeu com erro.')
     setSyncStatus({ ok: true, settings: customSettings })
+    setAccount(prev => prev || { name: 'IP_RJP', email: 'Ligado via Apps Script', appsScript: true })
     const data = await callAppsScript(customSettings, { action: 'getRecords', payload: {} })
     const records = (data.records || []).map(normalizeRecord).filter(Boolean).reverse()
     if (records.length) {
